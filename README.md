@@ -8,11 +8,13 @@ To design, implement, and verify the functionality of basic AND, OR, and NOT log
 •	Linux Terminal
 •	Verilog HDL
 # Boolean Function
-The basic logic gates realize the following Boolean functions:
-
-•	AND: Y_AND = A . B
-•	OR: Y_OR = A + B
-•	NOT: Y_NOT = A'
+The basic logic gates — AND, NAND, OR, NOR, XOR and NOT — were realized using Verilog HDL:
+Y_AND = A.B
+Y_NAND = ~(A.B)
+Y_OR = A+B
+Y_NOR = ~(A+B)
+Y_XOR = A^B
+Y_NOT = A'
 
 # Theory / Synopsis
 Logic gates are the basic building blocks of digital systems. NAND and NOR are universal gates. XOR produces 1 when its inputs differ, while XNOR produces 1 when its inputs are equal.
@@ -21,14 +23,67 @@ File name	Purpose
 logic_gates.v	Logic-gate RTL
 logic_gates_tb.v	All input combinations and VCD generation
  # Verilog  Program
+module basic_gates (
+    input  wire a,
+    input  wire b,
+    output wire y_and,
+    output wire y_nand,
+    output wire y_or,
+    output wire y_nor,
+    output wire y_xor,
+    output wire y_not
+);
 
+    assign y_and = a & b;   // AND gate
+    assign y_nand = ~(a & b);
+    assign y_or  = a | b;   // OR gate
+    assign y_nor = ~(a |b);
+    assign y_xor = a ^ b;
+    assign y_not = ~a;      // NOT gate (inverter)
+    
+    
+endmodule
 # **Test Bench Program**
+module tb2;
+
+    reg a, b;
+    wire y_and, y_nand, y_or, y_nor, y_xor, y_not;
+
+    // Instantiate the design under test (DUT)
+    basic_gates uut (
+        .a(a),
+        .b(b),
+        .y_and(y_and),
+        .y_nand(y_nand),
+        .y_or(y_or),
+        .y_nor(y_nor),
+        .y_xor(y_xor),
+        .y_not(y_not)
+    );
+
+    initial begin
+        // ---- VCD dump setup ----
+        $dumpfile("basic_gates.vcd");   // name of the VCD file to be generated
+        $dumpvars(0, tb2);               // dump all signals in this testbench hierarchy
+
+        // ---- Apply all 4 input combinations ----
+        $monitor("Time=%0t a=%b b=%b | AND=%b NAND=%b OR=%b NOR=%b XNOR=%b NOT(a)=%b", $time, a, b, y_and, y_nand, y_or, y_nor, y_xor, y_not);
+
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+
+        #10 $finish;
+#10;
+    end
+
+endmodule
 
 
 
+ <img width="727" height="257" alt="image" src="https://github.com/user-attachments/assets/31a16ca1-a39a-492d-bb7f-02a31d026252" />
 
- 
-<img width="940" height="318" alt="image" src="https://github.com/user-attachments/assets/8a343bdb-ffb4-4aac-8b88-cf59eca374a8" />
 
 # Simulation Procedure
 STEP 1 – Open Terminal
@@ -75,10 +130,13 @@ The basic logic gates — AND, OR, and NOT — were realized using Verilog HDL:
 Y_AND = A.B
 Y_OR = A+B
 Y_NOT = A'
+<img width="974" height="262" alt="image" src="https://github.com/user-attachments/assets/f89eb374-def3-426d-96e0-84ad397f7b60" />
+
 The design was compiled and simulated using Synopsys VCS, and the functionality was verified using DVE waveform analysis, matching the expected truth table.
 Output
 # OUTPUT
 
+<img width="1527" height="835" alt="ROSE MARLIN S EXP-2" src="https://github.com/user-attachments/assets/b37e3806-8d08-43ec-9126-074dcf0308d1" />
 
  
 # Viva-Voce Questions
